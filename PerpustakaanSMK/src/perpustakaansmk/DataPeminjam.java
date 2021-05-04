@@ -4,20 +4,59 @@
  * and open the template in the editor.
  */
 package perpustakaansmk;
-
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 /**
  *
  * @author Atthoriq
  */
 public class DataPeminjam extends javax.swing.JFrame {
-
+    public ResultSet rst;
+    Connection CC = new koneksi().connect();
+    public Statement stt;
+    public DefaultTableModel tmdl;
+    public PreparedStatement prst;
     /**
      * Creates new form DataPeminjam
      */
     public DataPeminjam() {
         initComponents();
+        judul();
+        Datas("");
     }
-
+    public void judul() {
+            Object[] judul = {
+        "Nama Peminjam", "Judul Buku", "Tanggal Pinjam", "Tenggat Kembali"
+        };
+        tmdl = new DefaultTableModel(null, judul);
+        peminjam.setModel(tmdl);}
+    
+    public void Datas(String where) {
+        try {
+            stt = CC.createStatement();
+            tmdl.getDataVector().removeAllElements();
+            tmdl.fireTableDataChanged();
+            rst = stt.executeQuery("SELECT * FROM peminjam where status = 2 ");
+            
+            while(rst.next()){
+            Object[] data = {
+                rst.getString("Nama"),
+                rst.getString("judulbuku"),
+                rst.getString("tanggalpinjam"),
+                rst.getString("tenggatkembali")
+                
+                
+            };
+            tmdl.addRow(data);
+            }
+            }catch(Exception e){
+          e.printStackTrace();
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -29,7 +68,7 @@ public class DataPeminjam extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        peminjam = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
@@ -40,7 +79,7 @@ public class DataPeminjam extends javax.swing.JFrame {
 
         jPanel1.setBackground(new java.awt.Color(199, 234, 238));
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        peminjam.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -51,7 +90,7 @@ public class DataPeminjam extends javax.swing.JFrame {
                 "Nama Peminjam", "Judul Buku", "Tanggal Pinjam", "Tenggat Pengembalian"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(peminjam);
 
         jButton1.setText("Kembali");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -135,7 +174,7 @@ public class DataPeminjam extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-     KonfirmasiPeminjam a = new KonfirmasiPeminjam();
+     KonfirmasiPengembalian a = new KonfirmasiPengembalian();
         a.setVisible(true);
         dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
@@ -182,7 +221,7 @@ public class DataPeminjam extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
+    private javax.swing.JTable peminjam;
     // End of variables declaration//GEN-END:variables
 }

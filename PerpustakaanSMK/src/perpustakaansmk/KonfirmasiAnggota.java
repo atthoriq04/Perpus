@@ -4,20 +4,62 @@
  * and open the template in the editor.
  */
 package perpustakaansmk;
-
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 /**
  *
  * @author Atthoriq
  */
 public class KonfirmasiAnggota extends javax.swing.JFrame {
-
+    public ResultSet rst;
+    Connection CC = new koneksi().connect();
+    public Statement stt;
+    public DefaultTableModel tmdl;
+    public PreparedStatement prst;
+    String id;
     /**
      * Creates new form KonfirmasiAnggota
      */
     public KonfirmasiAnggota() {
         initComponents();
+        judul();
+        Datas("");
+        jButton1.setEnabled(false);
     }
-
+    public void judul() {
+            Object[] judul = {
+        "No Anggota","Nama", "NIS", "Tempat Tanggal Lahir", "Jurusan"
+        };
+        tmdl = new DefaultTableModel(null, judul);
+        konfiranggota.setModel(tmdl);}
+    
+    public void Datas(String where) {
+        try {
+            stt = CC.createStatement();
+            tmdl.getDataVector().removeAllElements();
+            tmdl.fireTableDataChanged();
+            rst = stt.executeQuery("SELECT * FROM anggota where status = 1 ");
+            
+            while(rst.next()){
+            Object[] data = {
+                rst.getString("noanggota"),
+                rst.getString("namaanggota"),
+                rst.getString("nis"),
+                rst.getString("tempatlahir"),
+                rst.getString("jurusan")
+                
+                
+            };
+            tmdl.addRow(data);
+            }
+            }catch(Exception e){
+          e.printStackTrace();
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -29,31 +71,41 @@ public class KonfirmasiAnggota extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        konfiranggota = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        pustakawan = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(199, 234, 238));
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        konfiranggota.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "Nama", "Kelas", "Tempat Tanggal Lahir", "NIS", "NISN"
+                "Nama", "NIS", "Tempat Tanggal Lahir", "Jurusan"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        konfiranggota.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                konfiranggotaMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(konfiranggota);
 
         jButton1.setText("Cetak Kartu");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("Kembali");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -68,7 +120,7 @@ public class KonfirmasiAnggota extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel2.setText("Nama Pustakawan");
 
-        jTextField1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        pustakawan.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -85,7 +137,7 @@ public class KonfirmasiAnggota extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jTextField1))
+                        .addComponent(pustakawan))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -100,7 +152,7 @@ public class KonfirmasiAnggota extends javax.swing.JFrame {
                 .addGap(31, 31, 31)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(pustakawan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(30, 30, 30)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -131,6 +183,26 @@ public class KonfirmasiAnggota extends javax.swing.JFrame {
         a.setVisible(true);
         dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void konfiranggotaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_konfiranggotaMouseClicked
+         id = konfiranggota.getValueAt(konfiranggota.getSelectedRow(), 0).toString();
+         jButton1.setEnabled(true);
+    }//GEN-LAST:event_konfiranggotaMouseClicked
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+       try{
+            stt = CC.createStatement();
+            stt.executeUpdate("UPDATE anggota set "
+                   + "petugaskonfir='" + pustakawan.getText() + "',"
+                   + "status = '2' WHERE anggota.noanggota = "+ id +  "" );
+            Datas("");
+            JOptionPane.showMessageDialog(null, "kartu Akan Dicetak");
+            pustakawan.setText("");
+            jButton1.setEnabled(false);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -174,7 +246,7 @@ public class KonfirmasiAnggota extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTable konfiranggota;
+    private javax.swing.JTextField pustakawan;
     // End of variables declaration//GEN-END:variables
 }

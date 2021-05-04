@@ -5,19 +5,46 @@
  */
 package perpustakaansmk;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Atthoriq
  */
 public class Login extends javax.swing.JFrame {
-
+    ResultSet rs = null;
+    Connection CC = null;
+    PreparedStatement pst = null;
     /**
      * Creates new form Login
      */
     public Login() {
         initComponents();
+            CC = new koneksi().connect();
     }
-
+    
+public void trylogin(){
+    String login = "SELECT * FROM user WHERE username = ? AND password = ?";
+        try {
+            pst = CC.prepareStatement(login);
+            pst.setString(1,user.getText());
+            pst.setString(2,pass.getText());
+            rs = pst.executeQuery();
+            if(rs.next()){
+            JOptionPane.showMessageDialog(null, "Login Success");
+                petugas_menu a = new petugas_menu();
+                a.setVisible(true);
+                dispose();
+            }else{
+                JOptionPane.showMessageDialog(null, "Login Failed");
+            }   
+            }catch(Exception e){
+                JOptionPane.showMessageDialog(null, e);
+        }        
+    }             
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -47,6 +74,11 @@ public class Login extends javax.swing.JFrame {
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
+            }
+        });
+        jButton1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jButton1KeyPressed(evt);
             }
         });
 
@@ -140,10 +172,12 @@ public class Login extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-       petugas_menu a = new petugas_menu();
-        a.setVisible(true);
-        dispose();
+    trylogin();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jButton1KeyPressed
+       trylogin();
+    }//GEN-LAST:event_jButton1KeyPressed
 
     /**
      * @param args the command line arguments
